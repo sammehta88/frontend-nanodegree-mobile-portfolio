@@ -504,8 +504,8 @@ function updatePositions() {
 
   var items = document.querySelectorAll('.mover');
 
-  // From intial testing, JS time due to this for loop
-  // 1st attempt at FIX: moved phase var outside of for loop (no longer have animating pizzas)
+  // From intial testing, JS long time due to this for-loop
+  // 1st attempt at FIX: moved phase var outside of for-loop (no longer have animating pizzas)
   // 2nd attempt: created var scroll outside loop to calculate scrollTop (much faster)
 
   var scroll = document.body.scrollTop / 1250;
@@ -514,7 +514,6 @@ function updatePositions() {
   for (var i = 0; i < items.length; i++) {
     phase = Math.sin(scroll + (i % 5));
     items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
-
   }
 
   // User Timing API to the rescue again. Seriously, it's worth learning.
@@ -531,10 +530,17 @@ function updatePositions() {
 window.addEventListener('scroll', updatePositions);
 
 // Generates the sliding pizzas when the page loads.
+// Don't need 200 pizzas generated, fixed code so number of pizzas generate is determined
+// by the viewport width and height
+
 document.addEventListener('DOMContentLoaded', function() {
-  var cols = 8;
   var s = 256;
-  for (var i = 0; i < 200; i++) {
+  var cols = viewport().width / s;
+  var rows = viewport().height / s;
+
+  var numPizzas = cols * rows;
+
+  for (var i = 0; i < numPizzas; i++) {
     var elem = document.createElement('img');
     elem.className = 'mover';
     elem.src = "images/pizza.png";
@@ -546,3 +552,16 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   updatePositions();
 });
+
+// code below used to find viewport height and width across browsers
+// from http://andylangton.co.uk/blog/development/get-viewport-size-width-and-height-javascript
+function viewport() {
+  var e = window
+  , a = 'inner';
+  if ( !( 'innerWidth' in window ) )
+  {
+  a = 'client';
+  e = document.documentElement || document.body;
+  }
+  return { width : e[ a+'Width' ] , height : e[ a+'Height' ] }
+}
