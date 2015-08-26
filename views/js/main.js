@@ -505,11 +505,16 @@ function updatePositions() {
   var items = document.querySelectorAll('.mover');
 
   // From intial testing, JS time due to this for loop
-  // FIX: moved phase var outside of for loop
-  var phase = Math.sin((document.body.scrollTop / 1250) + (i % 5));
+  // 1st attempt at FIX: moved phase var outside of for loop (no longer have animating pizzas)
+  // 2nd attempt: created var scroll outside loop to calculate scrollTop (much faster)
+
+  var scroll = document.body.scrollTop / 1250;
+  var phase;
 
   for (var i = 0; i < items.length; i++) {
+    phase = Math.sin(scroll + (i % 5));
     items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
+
   }
 
   // User Timing API to the rescue again. Seriously, it's worth learning.
