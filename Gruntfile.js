@@ -74,7 +74,9 @@ module.exports = function(grunt) {
         }]
       }
     },
-    //TODO: JSHint and watch
+    //TODO: update JSHint and watch configurations
+    //below code from example at http://gruntjs.com/configuring-tasks
+    //has not been modified to work with this project yet
     jshint: {
       files: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
       options: {
