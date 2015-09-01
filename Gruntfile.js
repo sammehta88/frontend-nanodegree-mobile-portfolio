@@ -40,9 +40,9 @@ module.exports = function(grunt) {
           optimizationLevel: 5,
         },
         files: {
-          'views/release/images/pizzeria-large.jpg': 'views/images/pizzeria-large.jpg',
-          'views/release/images/pizzeria-med.jpg': 'views/images/pizzeria-med.jpg',
-          'views/release/images/pizzeria-small.jpg': 'views/images/pizzeria-small.jpg',
+          'views/release/images/pizzeria-large.jpg': 'views/resized/images/pizzeria-large.jpg',
+          'views/release/images/pizzeria-med.jpg': 'views/resized/images/pizzeria-med.jpg',
+          'views/release/images/pizzeria-small.jpg': 'views/resized/images/pizzeria-small.jpg',
           'views/release/images/pizza.png': 'views/images/pizza.png'
         }
       }
@@ -54,7 +54,7 @@ module.exports = function(grunt) {
           engine: 'im',
           sizes: [{
             name: 'small',
-            width: 117,
+            width: 100,
             quality: 20
           },{
             name: 'large',
@@ -70,7 +70,7 @@ module.exports = function(grunt) {
           expand: true,
           cwd: 'views/',
           src: ['images/*.jpg'],
-          dest: 'views/'
+          dest: 'views/resized'
         }]
       }
     },
