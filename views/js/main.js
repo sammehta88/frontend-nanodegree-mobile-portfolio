@@ -512,16 +512,20 @@ function updatePositions() {
   // From intial testing, JS long time due to this for-loop
   // 1st attempt at FIX: moved phase var outside of for-loop (no longer have animating pizzas)
   // 2nd attempt: created var scroll outside loop to calculate scrollTop (much faster)
+  // 3rd: made phase array of 5 possible values
 
   var scroll = document.body.scrollTop / 1250;
+  var phaseArray = [];
+  var itemsLength = items.length;
   var phase;
-  var phase2;
 
-  for (var i = 0; i < items.length; i++) {
-    phase = Math.sin(scroll + (i % 5));
-    console.log(phase-phase2);
+  for (var j = 0; j < 5; j++) {
+    phase[j] = Math.sin(scroll + j);
+  }
+
+  for (var i = 0; i < itemsLength; i++) {
+    phase = phaseArray[i % 5];
     items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
-    phase2 = phase;
   }
 
   // User Timing API to the rescue again. Seriously, it's worth learning.
