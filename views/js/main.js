@@ -422,43 +422,35 @@ var resizePizzas = function(size) {
   changeSliderLabel(size);
 
   // Returns the size difference to change a pizza element from one size to another. Called by changePizzaSlices(size).
-  function determineDx (elem, size) {
-    var oldwidth = elem.offsetWidth;
-    var windowwidth = document.querySelector("#randomPizzas").offsetWidth;
-    var oldsize = oldwidth / windowwidth;
-
+  // Change to only work in percentages, following example in browser rendering optimization lesson 5 by udacity.
+  function sizeSwitcher(size) {
     // TODO: change to 3 sizes? no more xl?
     // Changes the slider value to a percent width
-    function sizeSwitcher (size) {
-      switch(size) {
-        case "1":
-          return 0.25;
-        case "2":
-          return 0.3333;
-        case "3":
-          return 0.5;
-        default:
-          console.log("bug in sizeSwitcher");
-      }
+    switch(size) {
+      case "1":
+        return 25;
+      case "2":
+        return 33.3333;
+      case "3":
+        return 50;
+      default:
+        console.log("bug in sizeSwitcher");
     }
-
-    var newsize = sizeSwitcher(size);
-    var dx = (newsize - oldsize) * windowwidth;
-
-    return dx;
   }
 
   // Iterates through pizza elements on the page and changes their widths
-  //TODO: move documentquery outside for loop... width change as CSS of randomPizzaContainer
   // FIX 1: create var len to calculate length and move outside for loop
+  // FIX 2: stop forced asynchronous layout by moving offsetwidth outside of for loop
+  // moved everything outside for loop except for setting style.  created arry to hold results of getelementsbyclassname
+  // cut down by tenfold
+  // FIX 3: remove determineDX and set newwidth as % directly
   function changePizzaSizes(size) {
-    var len = document.getElementsByClassName("randomPizzaContainer").length;
+    var pizzaArray = document.getElementsByClassName("randomPizzaContainer");
+    var len = pizzaArray.length;
+    var newwidth = sizeSwitcher(size);
 
     for (var i = 0; i < len; i++) {
-      var dx = determineDx(document.getElementsByClassName("randomPizzaContainer")[i], size);
-      var newwidth = (document.getElementsByClassName("randomPizzaContainer")[i].offsetWidth + dx) + 'px';
-      console.log(dx, newwidth); // newwidths same, dx same in small large, # of pizzas always the same
-      document.getElementsByClassName("randomPizzaContainer")[i].style.width = newwidth;
+      document.getElementsByClassName("randomPizzaContainer")[i].style.width = newwidth + '%';
     }
   }
 
