@@ -452,13 +452,13 @@ var resizePizzas = function(size) {
   //TODO: move documentquery outside for loop... width change as CSS of randomPizzaContainer
   // FIX 1: create var len to calculate length and move outside for loop
   function changePizzaSizes(size) {
-    var len = document.querySelectorAll(".randomPizzaContainer").length;
+    var len = document.document.getElementsByClassName(".randomPizzaContainer").length;
 
     for (var i = 0; i < len; i++) {
-      var dx = determineDx(document.querySelectorAll(".randomPizzaContainer")[i], size);
-      var newwidth = (document.querySelectorAll(".randomPizzaContainer")[i].offsetWidth + dx) + 'px';
+      var dx = determineDx(document.document.getElementsByClassName(".randomPizzaContainer")[i], size);
+      var newwidth = (document.document.getElementsByClassName(".randomPizzaContainer")[i].offsetWidth + dx) + 'px';
       console.log(dx, newwidth); // newwidths same, dx same in small large, # of pizzas always the same
-      document.querySelectorAll(".randomPizzaContainer")[i].style.width = newwidth;
+      document.document.getElementsByClassName(".randomPizzaContainer")[i].style.width = newwidth;
     }
   }
 
@@ -507,12 +507,13 @@ function updatePositions() {
   frame++;
   window.performance.mark("mark_start_frame");
 
-  var items = document.querySelectorAll('.mover');
+  //replaced document.querySelelctorAll with getElementsbyClassName
+  var items = document.getElementsByClassName('.mover');
 
   // From intial testing, JS long time due to this for-loop
   // 1st attempt at FIX: moved phase var outside of for-loop (no longer have animating pizzas)
   // 2nd attempt: created var scroll outside loop to calculate scrollTop (much faster)
-  // 3rd: made phase array of 5 possible values
+  // 3rd: made phase array of 5 possible values (good!)
 
   var scroll = document.body.scrollTop / 1250;
   var phaseArray = [];
