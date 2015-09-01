@@ -514,6 +514,7 @@ function updatePositions() {
   // 1st attempt at FIX: moved phase var outside of for-loop (no longer have animating pizzas)
   // 2nd attempt: created var scroll outside loop to calculate scrollTop (much faster)
   // 3rd: made phase array of 5 possible values (good!)
+  // 4th: moved 100 * out of for loop
 
   var scroll = document.body.scrollTop / 1250;
   var phaseArray = [];
@@ -521,12 +522,12 @@ function updatePositions() {
   var phase;
 
   for (var j = 0; j < 5; j++) {
-    phaseArray[j] = Math.sin(scroll + j);
+    phaseArray[j] = 100 * Math.sin(scroll + j);
   }
 
   for (var i = 0; i < itemsLength; i++) {
     phase = phaseArray[i % 5];
-    items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
+    items[i].style.left = items[i].basicLeft + phase + 'px';
   }
 
   // User Timing API to the rescue again. Seriously, it's worth learning.
@@ -547,7 +548,8 @@ window.addEventListener('scroll', updatePositions);
 // by the viewport width and height
 
 document.addEventListener('DOMContentLoaded', function() {
-  var s = 256;
+  //doubled s to decrease # of pizzas
+  var s = 512;
   var cols = viewport().width / s;
   var rows = viewport().height / s;
 
