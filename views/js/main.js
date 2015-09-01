@@ -491,22 +491,27 @@ function logAverageFrame(times) {   // times is the array of User Timing measure
   console.log("Average time to generate last 10 frames: " + sum / 10 + "ms");
 }
 
+// declare variable items as empty array, will be used to store location
+// information for the animated pizzas
+var items = [];
+
 // The following code for sliding background pizzas was pulled from Ilya's demo found at:
 // https://www.igvita.com/slides/2012/devtools-tips-and-tricks/jank-demo.html
 
 // Moves the sliding background pizzas based on scroll position
+// move items array to outside this function
 function updatePositions() {
   frame++;
   window.performance.mark("mark_start_frame");
-
   //replaced document.querySelelctorAll with getElementsbyClassName
-  var items = document.getElementsByClassName('mover');
+  //var items = document.getElementsByClassName('mover');
 
   // From intial testing, JS long time due to this for-loop
   // 1st attempt at FIX: moved phase var outside of for-loop (no longer have animating pizzas)
   // 2nd attempt: created var scroll outside loop to calculate scrollTop (much faster)
   // 3rd: made phase array of 5 possible values (good!)
   // 4th: moved 100 * out of for loop
+  // 5th: moved items as global variable that holds all mover class elements
 
   var scroll = document.body.scrollTop / 1250;
   var phaseArray = [];
@@ -538,11 +543,13 @@ window.addEventListener('scroll', updatePositions);
 // Generates the sliding pizzas when the page loads.
 // Don't need 200 pizzas generated, fixed code so number of pizzas generate is determined
 // by the viewport width and height
+// each element created is pushed into items array to decrease DOM access
+// when updating positions
 
 document.addEventListener('DOMContentLoaded', function() {
   var s = 256;
-  var cols = viewport().width / s;
-  var rows = viewport().height / s;
+  var cols = Math.floor(viewport().width / s);
+  var rows = Math.ceil(viewport().height / s);
 
   var numPizzas = cols * rows;
 
@@ -555,8 +562,10 @@ document.addEventListener('DOMContentLoaded', function() {
     elem.basicLeft = (i % cols) * s;
     elem.style.top = (Math.floor(i / cols) * s) + 'px';
     document.querySelector("#movingPizzas1").appendChild(elem);
+    items.push(elem);
   }
-  updatePositions();
+
+  updatePositions;
 });
 
 // code below used to find viewport height and width across browsers
