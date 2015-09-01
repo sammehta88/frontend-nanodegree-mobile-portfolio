@@ -25,4 +25,7 @@ footer {
 footer span { float: right; font-style: italic; }
 
 /* Smartphones (portrait) */
-/* moved css to separate css file*/
+@media only screen and (max-width: 480px) {
+  body { font-size: 12px;}
+  header p { padding-left: 4.5em;}
+}
