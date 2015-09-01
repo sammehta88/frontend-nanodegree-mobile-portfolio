@@ -548,8 +548,7 @@ window.addEventListener('scroll', updatePositions);
 // by the viewport width and height
 
 document.addEventListener('DOMContentLoaded', function() {
-  //doubled s to decrease # of pizzas
-  var s = 512;
+  var s = 256;
   var cols = viewport().width / s;
   var rows = viewport().height / s;
 
