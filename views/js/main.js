@@ -528,6 +528,7 @@ function updatePositions() {
   for (var i = 0; i < itemsLength; i++) {
     phase = phaseArray[i % 5];
     items[i].style.left = items[i].basicLeft + phase + 'px';
+    //items[i].style.transform = 'translateX(' + phase + 'px)'; SLOWER
   }
 
   // User Timing API to the rescue again. Seriously, it's worth learning.
@@ -570,7 +571,7 @@ document.addEventListener('DOMContentLoaded', function() {
     items.push(elem);
   }
 
-  // requestAnimationFrame(updatePosition); Not needed?
+  requestAnimationFrame(updatePositions);// Not needed?
   //updatePositions;
 });
 
