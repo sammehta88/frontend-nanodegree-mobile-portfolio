@@ -62,7 +62,7 @@ module.exports = function(grunt) {
             quality: 20
           },{
             name: 'med',
-            width: 293,
+            width: 500,
             quality: 20
           }]
         },
