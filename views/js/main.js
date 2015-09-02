@@ -500,7 +500,9 @@ var items = [];
 
 // Moves the sliding background pizzas based on scroll position
 // move items array to outside this function
+// Add rAF - change to add ticking reset
 function updatePositions() {
+  ticking = false;
   frame++;
   window.performance.mark("mark_start_frame");
   //replaced document.querySelelctorAll with getElementsbyClassName
@@ -513,7 +515,8 @@ function updatePositions() {
   // 4th: moved 100 * out of for loop
   // 5th: moved items as global variable that holds all mover class elements
 
-  var scroll = document.body.scrollTop / 1250;
+  //var scroll = document.body.scrollTop / 1250;
+  var scroll = latestKnownScrollY;
   var phaseArray = [];
   var itemsLength = items.length;
   var phase;
@@ -538,13 +541,15 @@ function updatePositions() {
 }
 
 // runs updatePositions on scroll
-window.addEventListener('scroll', updatePositions);
+// window.addEventListener('scroll', updatePositions);
 
 // Generates the sliding pizzas when the page loads.
 // Don't need 200 pizzas generated, fixed code so number of pizzas generate is determined
 // by the viewport width and height
 // each element created is pushed into items array to decrease DOM access
 // when updating positions
+
+// add rAF
 
 document.addEventListener('DOMContentLoaded', function() {
   var s = 256;
@@ -565,7 +570,8 @@ document.addEventListener('DOMContentLoaded', function() {
     items.push(elem);
   }
 
-  updatePositions;
+  // requestAnimationFrame(updatePosition); Not needed?
+  //updatePositions;
 });
 
 // code below used to find viewport height and width across browsers
@@ -580,3 +586,22 @@ function viewport() {
   }
   return { width : e[ a+'Width' ] , height : e[ a+'Height' ] }
 }
+
+// followed example on http://www.html5rocks.com/en/tutorials/speed/animations/
+var latestKnownScrollY = 0;
+var ticking = false;
+
+function onScroll() {
+  latestKnownScrollY = document.body.scrollTop / 1250;
+  requestTick();
+}
+
+function requestTick() {
+  if(!ticking) {
+    requestAnimationFrame(updatePositions);
+  }
+  ticking = true;
+}
+
+// runs updatePositions on scroll
+window.addEventListener('scroll', onScroll, false);
