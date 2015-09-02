@@ -422,7 +422,8 @@ var resizePizzas = function(size) {
   changeSliderLabel(size);
 
   // Returns the size difference to change a pizza element from one size to another. Called by changePizzaSlices(size).
-  // Change to only work in percentages, following example in browser rendering optimization lesson 5 by udacity.
+  // Changed to only work in percentages, following example in browser rendering optimization lesson 5 by udacity.
+  // Removes unnecessary calculations, speeding up the resize
   function sizeSwitcher(size) {
     // TODO: change to 3 sizes? no more xl?
     // Changes the slider value to a percent width
@@ -440,9 +441,9 @@ var resizePizzas = function(size) {
 
   // Iterates through pizza elements on the page and changes their widths
   // FIX 1: create var len to calculate length and move outside for loop
-  // FIX 2: stop forced asynchronous layout by moving offsetwidth outside of for loop
-  // moved everything outside for loop except for setting style.  created arry to hold results of getelementsbyclassname
-  // cut down by tenfold
+  //        stop forced synchronous layout by moving offsetwidth outside of for loop
+  //        moved everything outside for loop except for setting style.
+  // FIX 2: created arry to hold results of getElementsByClassName
   // FIX 3: remove determineDX and set newwidth as % directly
   function changePizzaSizes(size) {
     var pizzaArray = document.getElementsByClassName("randomPizzaContainer");
@@ -450,7 +451,7 @@ var resizePizzas = function(size) {
     var newwidth = sizeSwitcher(size);
 
     for (var i = 0; i < len; i++) {
-      document.getElementsByClassName("randomPizzaContainer")[i].style.width = newwidth + '%';
+      pizzaArray[i].style.width = newwidth + '%';
     }
   }
 
@@ -491,7 +492,7 @@ function logAverageFrame(times) {   // times is the array of User Timing measure
   console.log("Average time to generate last 10 frames: " + sum / 10 + "ms");
 }
 
-// declare variable items as empty array, will be used to store location
+// Declare variable items as empty array, will be used to store location
 // information for the animated pizzas
 var items = [];
 
@@ -499,32 +500,33 @@ var items = [];
 // https://www.igvita.com/slides/2012/devtools-tips-and-tricks/jank-demo.html
 
 // Moves the sliding background pizzas based on scroll position
-// move items array to outside this function
-// Add rAF - change to add ticking reset
+// Add ticking reset so updatePositions can be called again by rAF
 function updatePositions() {
   ticking = false;
   frame++;
   window.performance.mark("mark_start_frame");
   //replaced document.querySelelctorAll with getElementsbyClassName
-  //var items = document.getElementsByClassName('mover');
 
   // From intial testing, JS long time due to this for-loop
   // 1st attempt at FIX: moved phase var outside of for-loop (no longer have animating pizzas)
   // 2nd attempt: created var scroll outside loop to calculate scrollTop (much faster)
-  // 3rd: made phase array of 5 possible values (good!)
+  // 3rd: made phase array of 5 possible values
   // 4th: moved 100 * out of for loop
   // 5th: moved items as global variable that holds all mover class elements
+  // 6th: followed example on http://www.html5rocks.com/en/tutorials/speed/animations/ to debounce scroll
+  //      events
 
-  //var scroll = document.body.scrollTop / 1250;
   var scroll = latestKnownScrollY;
   var phaseArray = [];
   var itemsLength = items.length;
   var phase;
 
+  // Creates array of 5 possible positions that pizzas will have
   for (var j = 0; j < 5; j++) {
     phaseArray[j] = 100 * Math.sin(scroll + j);
   }
 
+  // assigns phase value to each pizza and updates style for new position
   for (var i = 0; i < itemsLength; i++) {
     phase = phaseArray[i % 5];
     items[i].style.left = items[i].basicLeft + phase + 'px';
@@ -541,16 +543,11 @@ function updatePositions() {
   }
 }
 
-// runs updatePositions on scroll
-// window.addEventListener('scroll', updatePositions);
-
 // Generates the sliding pizzas when the page loads.
 // Don't need 200 pizzas generated, fixed code so number of pizzas generate is determined
 // by the viewport width and height
-// each element created is pushed into items array to decrease DOM access
+// Each element created is pushed into items array to decrease DOM access
 // when updating positions
-
-// add rAF
 
 document.addEventListener('DOMContentLoaded', function() {
   var s = 256;
@@ -568,11 +565,14 @@ document.addEventListener('DOMContentLoaded', function() {
     elem.basicLeft = (i % cols) * s;
     elem.style.top = (Math.floor(i / cols) * s) + 'px';
     document.querySelector("#movingPizzas1").appendChild(elem);
+
+    // Each element created is pushed into items array to decrease DOM access
+    // when updating positions
     items.push(elem);
   }
 
-  requestAnimationFrame(updatePositions);// Not needed?
-  //updatePositions;
+  // moves pizzas to initial position
+  requestAnimationFrame(updatePositions);
 });
 
 // code below used to find viewport height and width across browsers
@@ -589,14 +589,19 @@ function viewport() {
 }
 
 // followed example on http://www.html5rocks.com/en/tutorials/speed/animations/
+// Debounces scroll events
 var latestKnownScrollY = 0;
 var ticking = false;
 
+// scrollTop is calculated in onScroll function rather than in updatePositions to stop
+// scroll eventListener from calling updatePositions too often
 function onScroll() {
   latestKnownScrollY = document.body.scrollTop / 1250;
   requestTick();
 }
 
+// will animate a frame if not already requesting one
+// uses rAF for better FPS
 function requestTick() {
   if(!ticking) {
     requestAnimationFrame(updatePositions);
@@ -604,5 +609,5 @@ function requestTick() {
   ticking = true;
 }
 
-// runs updatePositions on scroll
+// runs onScroll on scroll
 window.addEventListener('scroll', onScroll, false);
